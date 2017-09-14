@@ -1,0 +1,6 @@
+<< I'm on-line
+>> hg
+<< cds
+>> qs
+<< bgf
+>> *
