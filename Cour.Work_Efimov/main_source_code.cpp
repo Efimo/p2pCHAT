@@ -10,19 +10,17 @@
 using namespace std;
 
 const char* first = "*";
-const char* twice = "**";
-const char* third = "***";
 
 int main(){
 	setlocale(LC_ALL, "rus");
-	cout << "*   - Найти сообщение." << endl;
+	cout << "*   - Find MSG." << endl;
 	cout << "        Client - 0 Server - 1" << endl;
 	bool flag = false;
 	cin >> flag;
 	if (flag == true){
 		ofstream file_history("history_server.txt", ios_base::trunc);
 		struct sockaddr_in addr; // структура с адресом
-		char buf[SIZE_MSG];    // буфур для приема
+		char buf[SIZE_MSG];    // буфер для приема
 		WSADATA wsa;            // Структура с информацией о WinSock
 		SOCKET sock, listener;  // дескрипторы сокетов
 		// Инициализация WinSock
@@ -61,21 +59,7 @@ int main(){
 			}
 			while (1){
 				recv(sock, buf, SIZE_MSG, 0);//чтение данных из сокета
-				if (stricmp("start_send_history_$Q@dhasjdhagd^@&$#!@", reinterpret_cast<const char*>(buf)) == 0){
-					file_history.close();
-					ifstream file_read("history_server.txt", ios_base::in);
-					memset(buf, 0, SIZE_MSG);
-					while (!file_read.getline(buf, SIZE_MSG).eof()){
-						send(sock, buf, SIZE_MSG, 0);
-						Sleep(20);
-						memset(buf, 0, SIZE_MSG);
-					}
-					send(sock, "stop_send_history_df32*2h&#@^!#$hjgh2$#", SIZE_MSG, 0);
-					file_read.close();
-					file_history.open("history_server.txt", ios_base::app);
-					send(sock, "History send!", SIZE_MSG, 0);
-					continue;
-				}
+				
 				file_history << "<< " << buf << endl;
 				cout << "<< " << buf << endl;
 				cout << ">> ";
@@ -140,21 +124,7 @@ int main(){
 		file_history << ">> " << "I'm on-line" << endl;
 		while (1){
 			recv(sock, buf, SIZE_MSG, 0);
-			if (stricmp("start_send_history_$Q@dhasjdhagd^@&$#!@", reinterpret_cast<const char*>(buf)) == 0){
-				file_history.close();
-				ifstream file_read("history_server.txt", ios_base::in);
-				memset(buf, 0, SIZE_MSG);
-				while (!file_read.getline(buf, SIZE_MSG).eof()){
-					send(sock, buf, SIZE_MSG, 0);
-					Sleep(10);
-					memset(buf, 0, SIZE_MSG);
-				}
-				send(sock, "stop_send_history_df32*2h&#@^!#$hjgh2$#", SIZE_MSG, 0); //отправка данных
-				file_read.close();
-				file_history.open("history_server.txt", ios_base::app);//открытие файла для записи в конец файла
-				send(sock, "History send!", SIZE_MSG, 0); // отправка истории
-				continue;
-			}
+
 			file_history << "<< " << buf << endl;
 			cout << "<< " << buf << endl;
 			cout << ">> ";
