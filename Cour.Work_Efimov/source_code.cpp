@@ -1,5 +1,6 @@
 #include "main_header.h"
 
+//release func for find word in history msg`ing
 void find_word(void){
 	ifstream file("history_server.txt");
 	char pCFindWord[SIZE_MSG];

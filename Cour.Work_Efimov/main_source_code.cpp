@@ -2,18 +2,17 @@
 
 const char* first = "*";
 
-void find_word(void);
-
+//main function in project
 int main(){
-	setlocale(LC_ALL, "rus");
+	setlocale(LC_ALL, "rus"); //for russian symbols
 	cout << "*   - Find MSG." << endl;
 	cout << "        Client - 0 Server - 1" << endl;
-	bool flag = false;
+	bool flag = false; //flag: client or server
 	cin >> flag;
-	if (flag == true){
+	if (flag == true){ // server
 		ofstream file_history("history_server.txt", std::ios_base::trunc);
 		struct sockaddr_in addr;
-		char buf[SIZE_MSG];
+		char buf[SIZE_MSG]; // box(buffer) for msg
 		WSADATA wsa;
 		SOCKET sock, listener;
 		if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
@@ -74,7 +73,7 @@ int main(){
 			}
 		}
 	}
-	else{
+	else{//client
 		ofstream file_history("history_server.txt", std::ios_base::trunc);
 		char buf[SIZE_MSG];
 		struct sockaddr_in addr;

@@ -13,4 +13,5 @@ using std::cin;
 using std::ofstream;
 using std::ifstream;
 
+//prototype func for find word in history msg`ing
 void find_word(void);
