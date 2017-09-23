@@ -7,9 +7,15 @@
 #pragma comment(lib,"Ws2_32.lib")
 #define SIZE_MSG 1024
 
-using namespace std;
+using std::endl;
+using std::cout;
+using std::cin;
+using std::ofstream;
+using std::ifstream;
 
 const char* first = "*";
+
+void find_word(void);
 
 int main(){
 	setlocale(LC_ALL, "rus");
@@ -18,7 +24,7 @@ int main(){
 	bool flag = false;
 	cin >> flag;
 	if (flag == true){
-		ofstream file_history("history_server.txt", ios_base::trunc);
+		ofstream file_history("history_server.txt", std::ios_base::trunc);
 		struct sockaddr_in addr; // структура с адресом
 		char buf[SIZE_MSG];    // буфер для приема
 		WSADATA wsa;            // Структура с информацией о WinSock
@@ -67,19 +73,7 @@ int main(){
 				memset(buf, 0, SIZE_MSG);
 				cin >> buf;
 				if (stricmp(first, reinterpret_cast<const char*>(buf)) == 0){
-					ifstream file_1("history_server.txt");
-					char pCFindWord_1[SIZE_MSG];
-					cout << "Input word: ";
-					cin >> pCFindWord_1;
-					char cBuffer_1[SIZE_MSG];
-					while (!file_1.eof()){
-						file_1.getline(cBuffer_1, SIZE_MSG);
-						if (strstr(cBuffer_1, pCFindWord_1) != NULL){
-							cout << "MSG FIND: " << cBuffer_1 << endl;
-						}
-						memset(cBuffer_1, 0, SIZE_MSG);
-					}
-					file_1.close();
+					find_word();
 				}
 				file_history << buf << endl;
 				send(sock, buf, SIZE_MSG, 0);
@@ -88,10 +82,16 @@ int main(){
 			cout << "Client disconnect!" << endl;
 			closesocket(sock); // закрываем сокет
 			file_history.close();
+			if (WSACleanup()){
+				cout << "Error Cleapir\n";
+			}
+			else{
+				cout << "Cleapir Good !!!!!\n";
+			}
 		}
 	}//end (if flag = server)
 	else{
-		ofstream file_history("history_server.txt", ios_base::trunc);
+		ofstream file_history("history_server.txt", std::ios_base::trunc);
 		char buf[SIZE_MSG]; 		  // буфур для приема
 		struct sockaddr_in addr; // структура с адресом
 
@@ -120,7 +120,7 @@ int main(){
 			exit(2);
 		}
 
-		send(sock, "I'm on-line", SIZE_MSG, 0); // отправка сообщения на сервер
+		send(sock, "Hi!", SIZE_MSG, 0); // отправка первого сообщения на сервер
 		file_history << ">> " << "I'm on-line" << endl;
 		while (1){
 			recv(sock, buf, SIZE_MSG, 0);
@@ -132,25 +132,38 @@ int main(){
 			memset(buf, 0, SIZE_MSG);
 			cin >> buf;
 			if (stricmp(first, reinterpret_cast<const char*>(buf)) == 0){
-				ifstream file_2("history_server.txt");
-				char pCFindWord_2[SIZE_MSG];
-				cout << "Input word: ";
-				cin >> pCFindWord_2;
-				char cBuffer_2[SIZE_MSG];
-				while (!file_2.eof()){
-					file_2.getline(cBuffer_2, SIZE_MSG);
-					if (strstr(cBuffer_2, pCFindWord_2) != NULL){
-						cout << "MSG FIND: " << cBuffer_2 << endl;
-					}
-					memset(cBuffer_2, 0, SIZE_MSG);
-				}
-				file_2.close();
+				find_word();
 			}
 			file_history << buf << endl;
 			send(sock, buf, SIZE_MSG, 0);
 		}
-		closesocket(sock); // закрываем сокет
+		closesocket(sock);
 		file_history.close();
-	}//end (if flag = client)
+		if (WSACleanup()){
+			cout << "Error Cleapir\n";
+		}
+		else{
+			cout << "Cleapir Good !!!!!\n";
+		}
+	}
 	return 0;
+}
+
+void find_word(void){
+	ifstream file("history_server.txt");
+	char pCFindWord[SIZE_MSG];
+	cout << "Input word: ";
+	cin >> pCFindWord;
+	char cBuffer[SIZE_MSG];
+	while (!file.eof()){
+		file.getline(cBuffer, SIZE_MSG);
+		if (strstr(cBuffer, pCFindWord) != NULL){
+			cout << "MSG FIND: " << cBuffer << endl;
+		}
+		else{
+			cout << "MSG NO FIND :-( " << endl;
+		}
+		memset(cBuffer, 0, SIZE_MSG);
+	}
+	file.close();
 }
